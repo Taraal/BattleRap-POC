@@ -1,5 +1,5 @@
+from datetime import datetime
 from django.db import models
-
 # Create your models here.
 
 
@@ -18,17 +18,26 @@ class User(models.Model):
     instagram = models.TextField(null=True)
 
 
-
 class Publication(models.Model):
     description = models.TextField(null=True)
     publication = models.TextField(null=True) #URL de l'image/vidéo
     user = models.ForeignKey(User, related_name='videos', on_delete=models.CASCADE)
+    instrumental = models.TextField(null=True)
+    date = models.DateTimeField(default=datetime.now, blank=True)
 
 
-class Tags(models.Model):
+class Tag(models.Model):
     publication = models.ManyToManyField(Publication)
 
 
-class Tournois(models.Model):
+class Tournoi(models.Model):
     user = models.ForeignKey(User, related_name='tournois', on_delete=models.CASCADE)
     rank = models.IntegerField(null=True, default=32)
+
+class Vote(models.Model):
+    user = models.ForeignKey(User)
+    publication = models.ForeignKey(Publication, related_name='votes', on_delete=models.CASCADE)
+    date = models.DateTimeField(default=datetime.now, blank=True)
+
+    class Meta:
+        unique_together = (("user", "publication"),)
